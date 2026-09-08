@@ -7,6 +7,7 @@ resource "yandex_compute_instance" "bastion" {
   hostname    = "bastion"
   zone        = "ru-central1-a"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
 # с минимальным конфигом
   resources {
@@ -14,9 +15,9 @@ resource "yandex_compute_instance" "bastion" {
     memory        = 2
     core_fraction = 20
   }
-# прерываемая
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {

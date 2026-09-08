@@ -6,6 +6,7 @@ resource "yandex_compute_instance" "web_1" {
   hostname    = "web-1"
   zone        = "ru-central1-a"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2
@@ -13,8 +14,9 @@ resource "yandex_compute_instance" "web_1" {
     core_fraction = 20
   }
 
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {
@@ -43,6 +45,7 @@ resource "yandex_compute_instance" "web_2" {
   hostname    = "web-2"
   zone        = "ru-central1-b"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2
@@ -50,8 +53,9 @@ resource "yandex_compute_instance" "web_2" {
     core_fraction = 20
   }
 
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {
@@ -80,6 +84,7 @@ resource "yandex_compute_instance" "elastic" {
   hostname    = "elastic"
   zone        = "ru-central1-a"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2
@@ -87,8 +92,9 @@ resource "yandex_compute_instance" "elastic" {
     core_fraction = 20
   }
 
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {
@@ -119,6 +125,7 @@ resource "yandex_compute_instance" "zabbix" {
   hostname    = "zabbix"
   zone        = "ru-central1-a"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2
@@ -126,8 +133,9 @@ resource "yandex_compute_instance" "zabbix" {
     core_fraction = 20
   }
 
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {
@@ -156,6 +164,7 @@ resource "yandex_compute_instance" "kibana" {
   hostname    = "kibana"
   zone        = "ru-central1-a"
   platform_id = "standard-v3"
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2
@@ -163,8 +172,9 @@ resource "yandex_compute_instance" "kibana" {
     core_fraction = 20
   }
 
+# прерываемая (была ранее, теперь непрерываемая)
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   boot_disk {
