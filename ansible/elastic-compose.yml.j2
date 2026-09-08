@@ -1,0 +1,18 @@
+
+services:
+  elasticsearch:
+    image: mirror.gcr.io/elasticsearch:8.11.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    restart: always
+
+volumes:
+  elastic_data:

@@ -1,0 +1,19 @@
+---
+- name: apt update
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: install docker and docker compose
+  apt:
+    name:
+      - docker.io
+      - docker-compose-v2
+    state: present
+
+- name: start_enable docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+

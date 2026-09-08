@@ -1,0 +1,39 @@
+---
+- name: create directory for elastic
+  file:
+    path: /opt/elasticsearch
+    state: directory
+    mode: '0755'
+  when: inventory_hostname in groups['elastic']
+
+- name: copy docker-compose for elastic
+  template:
+    src: elastic-compose.yml.j2
+    dest: /opt/elasticsearch/docker-compose.yml
+  when: inventory_hostname in groups['elastic']
+
+- name: start elastic in docker
+  community.docker.docker_compose_v2:
+    project_src: /opt/elasticsearch
+    state: present
+  when: inventory_hostname in groups['elastic']
+
+- name: create directory for kibana
+  file:
+    path: /opt/kibana
+    state: directory
+    mode: '0755'
+  when: inventory_hostname in groups['kibana']
+
+- name: copy docker-compose for kibana
+  template:
+    src: kibana-compose.yml.j2
+    dest: /opt/kibana/docker-compose.yml
+  when: inventory_hostname in groups['kibana']
+
+- name: start kibana for docker
+  community.docker.docker_compose_v2:
+    project_src: /opt/kibana
+    state: present
+  when: inventory_hostname in groups['kibana']
+

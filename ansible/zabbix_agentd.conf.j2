@@ -1,0 +1,12 @@
+PidFile=/var/run/zabbix/zabbix_agent2.pub.pid
+LogFile=/var/log/zabbix/zabbix_agent2.log
+LogFileSize=0
+
+Server=127.0.0.1,zabbix.ru-central1.internal,172.16.0.0/12
+ServerActive=127.0.0.1,zabbix.ru-central1.internal
+
+Hostname={{ inventory_hostname }}
+
+Timeout=30
+
+Include=/etc/zabbix/zabbix_agent2.d/*.conf

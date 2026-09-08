@@ -1,0 +1,38 @@
+---
+- name: 1
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: 2
+  get_url:
+    url: "https://mirror.yandex.ru/mirrors/elastic/8/pool/main/f/filebeat/filebeat-8.11.1-amd64.deb"
+    dest: "/tmp/filebeat.deb"
+    mode: '0644'
+
+- name: 3
+  apt:
+    deb: "/tmp/filebeat.deb"
+    state: present
+
+- name: 4
+  file:
+    path: "/tmp/filebeat.deb"
+    state: absent
+
+- name: 5
+  template:
+    src: filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: 6
+  service:
+    name: filebeat
+    state: restarted
+    enabled: yes
+
+

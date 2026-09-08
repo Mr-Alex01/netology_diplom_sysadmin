@@ -1,0 +1,18 @@
+
+services:
+  kibana:
+    image: mirror.gcr.io/kibana:8.11.1
+    container_name: kibana
+    environment:
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=http://10.0.2.26:9200
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_SECURITY_ENABLED=false
+      - SERVER_PUBLICBASEURL=http://84.252.129.63:5601
+      - XPACK_SECURITY_ENCRYPTIONKEY=something_secret_32_chars_minimum_length
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=something_secret_32_chars_minimum_length
+      - XPACK_REPORTING_ENCRYPTIONKEY=something_secret_32_chars_minimum_length
+    ports:
+      - "5601:5601"
+    restart: always

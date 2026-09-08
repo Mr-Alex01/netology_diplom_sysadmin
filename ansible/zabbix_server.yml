@@ -1,0 +1,16 @@
+---
+- name: creat working directory zabbix
+  file:
+    path: /opt/zabbix
+    state: directory
+    mode: '0755'
+
+- name: copy template docker-compose zabbix
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/zabbix/docker-compose.yml
+
+- name: start sabbix and postgresql docker
+  community.docker.docker_compose_v2:
+    project_src: /opt/zabbix
+    state: present

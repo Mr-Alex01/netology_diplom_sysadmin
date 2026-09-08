@@ -1,0 +1,141 @@
+# target group из двух web-servers
+resource "yandex_alb_target_group" "web_tg" {
+  name = "web-servers-target-group"
+
+  target {
+    subnet_id  = yandex_vpc_subnet.private_a.id
+    ip_address = yandex_compute_instance.web_1.network_interface.0.ip_address
+  }
+
+  target {
+    subnet_id  = yandex_vpc_subnet.private_b.id
+    ip_address = yandex_compute_instance.web_2.network_interface.0.ip_address
+  }
+}
+
+# backend group
+resource "yandex_alb_backend_group" "web_bg" {
+  name = "web-servers-backend-group"
+
+  http_backend {
+    name             = "web-http-backend"
+    weight           = 1
+    port             = 80
+    target_group_ids = [yandex_alb_target_group.web_tg.id]
+    
+    healthcheck {
+      timeout             = "4s"
+      interval            = "10s"
+      healthy_threshold   = 2
+      unhealthy_threshold = 3
+      
+      http_healthcheck {
+        path = "/"
+      }
+    }
+  }
+}
+
+# http router
+resource "yandex_alb_http_router" "web_router" {
+  name = "web-http-router"
+}
+
+resource "yandex_alb_virtual_host" "web_vhost" {
+  name           = "web-virtual-host"
+  http_router_id = yandex_alb_http_router.web_router.id
+
+  # правило 1
+  route {
+    name = "kibana-route"
+    http_route {
+      http_match {
+        path {
+          prefix = "/kibana"
+        }
+      }
+      http_route_action {
+        backend_group_id = yandex_alb_backend_group.kibana_bg.id
+        timeout          = "60s"
+      }
+    }
+  }
+
+  # правило 2
+  route {
+    name = "site-route"
+    http_route {
+      http_route_action {
+        backend_group_id = yandex_alb_backend_group.web_bg.id
+        timeout          = "60s"
+      }
+    }
+  }
+}
+
+
+# application load balancer
+resource "yandex_alb_load_balancer" "web_alb" {
+  name               = "web-application-load-balancer"
+  network_id         = yandex_vpc_network.main.id
+  security_group_ids = [yandex_vpc_security_group.alb_sg.id]
+    
+  allocation_policy {
+    location {
+      zone_id   = "ru-central1-a"
+      subnet_id = yandex_vpc_subnet.public_a.id
+    }
+       
+    location {
+      zone_id   = "ru-central1-b"
+      subnet_id = yandex_vpc_subnet.private_b.id
+    }
+  }
+  
+  listener {
+    name = "http-listener"
+    endpoint {
+      address {
+        external_ipv4_address {}
+      }
+      ports = [80]
+    }
+    http {
+      handler {
+        http_router_id = yandex_alb_http_router.web_router.id
+      }
+    }
+  }
+}
+
+# kibana group
+resource "yandex_alb_target_group" "kibana_tg" {
+  name = "kibana-target-group"
+
+  target {
+    subnet_id  = yandex_vpc_subnet.public_a.id
+    ip_address = yandex_compute_instance.kibana.network_interface.0.ip_address
+  }
+}
+
+resource "yandex_alb_backend_group" "kibana_bg" {
+  name = "kibana-backend-group"
+
+  http_backend {
+    name             = "kibana-http-backend"
+    weight           = 1
+    port             = 5601
+    target_group_ids = [yandex_alb_target_group.kibana_tg.id]
+
+    healthcheck {
+      timeout             = "2s"
+      interval            = "5s"
+      healthy_threshold   = 2
+      unhealthy_threshold = 2
+      
+      http_healthcheck {
+        path = "/"
+      }
+    }
+  }
+}
